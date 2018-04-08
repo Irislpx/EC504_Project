@@ -1,11 +1,4 @@
-#!/usr/bin/env python
-#
-# It's to find out max flow in a flow network
-# It's similar to Ford-Fulkerson algorithm,
-# but defines search order for augmenting path
-# The path found must be a shortest path that has available capacity.
 # http://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
-#
 
 
 class Graph:
@@ -14,8 +7,8 @@ class Graph:
         self.node = []
         self.edge = {}
         self.neighbors = {}
-        self.graph = []  # residual graph
-        self.residual = []
+        self.graph = []
+        self.residual = []  # residual graph
         self.row = None
         self.source = None
         self.sink = None

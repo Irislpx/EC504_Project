@@ -1,18 +1,17 @@
-from scipy.misc import imresize
 import cv2
-import numpy as np
 import time
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.misc import imresize
 from ek import Graph
 from bayes import BayesClassifier
-from sklearn.mixture import GaussianMixture
-import matplotlib.pyplot as plt
 
 
 def build_bayes_graph(img, labels, sigma=1e2, kappa=2):
     """ Build a graph from 4-neighborhood of pixels.
         Foreground and background is determined from
-        labels (1 for foreground, -1 for background, 0 otherwise)
+        labels (1 for foreground, 0 for background)
         and is modeled with naive Bayes classifiers."""
     m, n = img.shape[:2]
     # RGB vector version (one pixel per row)

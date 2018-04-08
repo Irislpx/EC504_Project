@@ -1,11 +1,11 @@
-from scipy.misc import imresize
 import cv2
-import numpy as np
 import time
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.misc import imresize
 from ek import Graph
 from bayes import BayesClassifier
-import matplotlib.pyplot as plt
 
 
 def build_bayes_graph(img, labels, sigma=1e2, kappa=2):
