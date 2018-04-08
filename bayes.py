@@ -46,4 +46,3 @@ class BayesClassifier(object):
         ndx = est_prob.argmax(axis=0)
         est_labels = array([self.labels[n] for n in ndx])
         return est_labels, est_prob
-

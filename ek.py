@@ -1,4 +1,9 @@
+#!/usr/bin/env python
 #
+# It's to find out max flow in a flow network
+# It's similar to Ford-Fulkerson algorithm,
+# but defines search order for augmenting path
+# The path found must be a shortest path that has available capacity.
 # http://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
 #
 
@@ -49,7 +54,8 @@ class Graph:
             max, parent = self.bfs(flows)
             print(max)
             if max == 0:
-                self.sset = [self.source] + [i for i, v in enumerate(parent) if v >= 0]
+                self.sset = [self.source] + \
+                    [i for i, v in enumerate(parent) if v >= 0]
                 self.tset = [x for x in self.node if x not in self.sset]
                 print(self.sset, self.tset)
                 break

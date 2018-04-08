@@ -79,37 +79,37 @@ def create_msr_labels(anno):
         user annotations. """
     labels = np.zeros(anno.shape[:2])
 
-    anno_hsv=cv2.cvtColor(anno, cv2.COLOR_BGR2HSV)
+    anno_hsv = cv2.cvtColor(anno, cv2.COLOR_BGR2HSV)
 
     # lower red mask (0-10)
-    lower_red = np.array([0,43,46])
-    upper_red = np.array([10,255,255])
+    lower_red = np.array([0, 43, 46])
+    upper_red = np.array([10, 255, 255])
     mask0 = cv2.inRange(anno_hsv, lower_red, upper_red)
 
     # upper red mask (170-180)
-    lower_red = np.array([156,43,46])
-    upper_red = np.array([180,255,255])
+    lower_red = np.array([156, 43, 46])
+    upper_red = np.array([180, 255, 255])
     mask1 = cv2.inRange(anno_hsv, lower_red, upper_red)
 
     # join red masks
-    red_mask = mask0+mask1
+    red_mask = mask0 + mask1
 
     # blue mask
-    lower_blue = np.array([100,43,46])
-    upper_blue = np.array([124,255,255])
+    lower_blue = np.array([100, 43, 46])
+    upper_blue = np.array([124, 255, 255])
     blue_mask = cv2.inRange(anno_hsv, lower_blue, upper_blue)
 
     # background
-    labels[np.where(red_mask>0)] = -1
+    labels[np.where(red_mask > 0)] = -1
     # foreground
-    labels[np.where(blue_mask>0)] = 1
+    labels[np.where(blue_mask > 0)] = 1
 
     return labels
 
 
 def graph_cuts(img, anno, scale):
     img_down = imresize(img, scale, interp='bilinear')  # downsample
-    anno_down = imresize(anno, scale, interp='nearest') # downsample
+    anno_down = imresize(anno, scale, interp='nearest')  # downsample
     size = img_down.shape[:2]
     # create label
     labels = create_msr_labels(anno_down)

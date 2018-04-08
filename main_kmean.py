@@ -75,59 +75,13 @@ def cut_graph(gr, imsize):
     return res.reshape((h, w))
 
 
-def create_msr_labels(anno):
-    """ Create label matrix for training from
-        user annotations. """
-    labels = np.zeros(anno.shape[:2])
-
-    anno_hsv=cv2.cvtColor(anno, cv2.COLOR_BGR2HSV)
-
-    # lower red mask (0-10)
-    lower_red = np.array([0,43,46])
-    upper_red = np.array([10,255,255])
-    mask0 = cv2.inRange(anno_hsv, lower_red, upper_red)
-
-    # upper red mask (170-180)
-    lower_red = np.array([156,43,46])
-    upper_red = np.array([180,255,255])
-    mask1 = cv2.inRange(anno_hsv, lower_red, upper_red)
-
-    # join red masks
-    red_mask = mask0+mask1
-
-    # blue mask
-    lower_blue = np.array([100,43,46])
-    upper_blue = np.array([124,255,255])
-    blue_mask = cv2.inRange(anno_hsv, lower_blue, upper_blue)
-
-    # background
-    labels[np.where(red_mask>0)] = -1
-    # foreground
-    labels[np.where(blue_mask>0)] = 1
-
-    return labels
-
-
 def graph_cuts(img, scale):
     img_down = imresize(img, scale, interp='bilinear')  # downsample
-    # anno_down = imresize(anno, scale, interp='nearest') # downsample
     size = img_down.shape[:2]
     vim = img_down.reshape((-1, 3)).astype('float32')
-    # create label
-    # labels = create_msr_labels(anno_down)
-    '''
-    gmm = GaussianMixture(n_components=2, covariance_type='tied', max_iter=1)
-    vim = img_down.reshape((-1, 3))
-    gmm = gmm.fit(vim)
-    cluster = gmm.predict(vim)
-    cluster = cluster.reshape(img_down.shape[0], img_down.shape[1]).astype('float64')
-    print(cluster)
-    labels = np.zeros((cluster.shape[0], cluster.shape[1])).astype('float64')
-    labels[cluster==0] = -1
-    labels[cluster==1] = 1
-    '''
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-    ret, labels, center=cv2.kmeans(vim,2,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+    ret, labels, center = cv2.kmeans(
+        vim, 2, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
     labels = labels.reshape((size))
     print(labels)
     # create graph
@@ -145,7 +99,6 @@ if __name__ == '__main__':
     scale = 0.25
     img_name = sys.argv[1]
     img = cv2.imread(img_name)
-    # anno = cv2.imread(anno_name)
     start_time = time.time()
     mask, fore, back = graph_cuts(img, scale)
     end_time = time.time()
