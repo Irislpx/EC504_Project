@@ -1,4 +1,4 @@
-# EC504_Project
+# EC504 Project
 
 This is the repository for Boston University EC504 project _Image Segmentation via Network Flow_.
 
