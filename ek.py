@@ -1,9 +1,4 @@
-#!/usr/bin/env python
 #
-# It's to find out max flow in a flow network
-# It's similar to Ford-Fulkerson algorithm,
-# but defines search order for augmenting path
-# The path found must be a shortest path that has available capacity.
 # http://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
 #
 
