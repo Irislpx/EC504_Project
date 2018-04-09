@@ -69,7 +69,7 @@ def cut_graph(gr, imsize):
     cuts = gr.find_cut()
     # convert graph to image with labels
     res = np.zeros(h * w)
-    for pos in list(cuts.keys())[1:-1]:  # don't add source/sink
+    for pos in list(cuts.keys())[:-2]:  # don't add source/sink
         res[pos - 1] = cuts[pos]
     return res.reshape((h, w))
 
@@ -95,7 +95,7 @@ def graph_cuts(img, scale):
 
 
 if __name__ == '__main__':
-    scale = 0.25
+    scale = 0.1
     img_name = sys.argv[1]
     img = cv2.imread(img_name)
     start_time = time.time()
