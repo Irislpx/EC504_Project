@@ -1,4 +1,4 @@
-from numpy import *
+import numpy as np
 
 
 def gauss(m, v, x):
@@ -9,12 +9,12 @@ def gauss(m, v, x):
     else:
         n, d = x.shape
     # covariance matrix, subtract mean
-    S = diag(1 / v)
+    S = np.diag(1 / v)
     x = x - m
     # product of probabilities
-    y = exp(-0.5 * diag(dot(x, dot(S, x.T))))
+    y = np.exp(-0.5 * np.diag(np.dot(x, np.dot(S, x.T))))
     # normalize and return
-    return y * (2 * pi)**(-d / 2.0) / (sqrt(prod(v)) + 1e-6)
+    return y * (2 * np.pi)**(-d / 2.0) / (np.sqrt(np.prod(v)) + 1e-6)
 
 
 class BayesClassifier(object):
@@ -33,16 +33,16 @@ class BayesClassifier(object):
         self.labels = labels
         self.n = len(labels)
         for c in data:
-            self.mean.append(mean(c, axis=0))
-            self.var.append(var(c, axis=0))
+            self.mean.append(np.mean(c, axis=0))
+            self.var.append(np.var(c, axis=0))
 
     def classify(self, points):
         """ Classify the points by computing probabilities
             for each class and return most probable label. """
         # compute probabilities for each class
-        est_prob = array([gauss(m, v, points)
+        est_prob = np.array([gauss(m, v, points)
                           for m, v in zip(self.mean, self.var)])
         # get index of highest probability, this gives class label
         ndx = est_prob.argmax(axis=0)
-        est_labels = array([self.labels[n] for n in ndx])
+        est_labels = np.array([self.labels[n] for n in ndx])
         return est_labels, est_prob
