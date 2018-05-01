@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.misc import imresize
 from ek import Graph
-from bayes import BayesClassifier
+from sklearn.mixture import GaussianMixture
 
 
-def build_bayes_graph(img, labels, sigma=1e2, kappa=2):
+def build_bayes_graph(img, prob_fg, prob_bg, sigma=1e2, kappa=2):
     """ Build a graph from 4-neighborhood of pixels.
         Foreground and background is determined from
         labels (1 for foreground, 0 for background)
@@ -16,17 +16,6 @@ def build_bayes_graph(img, labels, sigma=1e2, kappa=2):
     m, n = img.shape[:2]
     # RGB vector version (one pixel per row)
     vim = img.reshape((-1, 3))
-    # RGB for foreground and background
-    foreground = img[labels == 1].reshape((-1, 3))
-    background = img[labels == 0].reshape((-1, 3))
-    train_data = [foreground, background]
-    # train naive Bayes classifier
-    bc = BayesClassifier()
-    bc.train(train_data)
-    # get probabilities for all pixels
-    bc_lables, prob = bc.classify(vim)
-    prob_fg, prob_bg = prob[0], prob[1]
-    print(np.amax(prob_fg), np.max(prob_bg))
     # create graph with m*n+2 nodes
     gr = Graph()
     gr.add_node(range(m * n + 2))
@@ -77,14 +66,19 @@ def cut_graph(gr, imsize):
 def graph_cuts(img, scale):
     img_down = imresize(img, scale, interp='bilinear')  # downsample
     size = img_down.shape[:2]
-    vim = img_down.reshape((-1, 3)).astype('float32')
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-    ret, labels, center = cv2.kmeans(
-        vim, 2, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-    labels = labels.reshape((size))
-    print(labels)
+    img_flat = np.concatenate((img_down[:, :, 0].flatten().reshape(-1, 1),
+                               img_down[:, :, 1].flatten().reshape(-1, 1),
+                               img_down[:, :, 2].flatten().reshape(-1, 1)), axis=1)
+    gmm = GaussianMixture(
+        n_components=2,
+        covariance_type='full',
+        max_iter=500,
+        n_init=5).fit(img_flat)
+    prob = gmm.predict_proba(img_flat)
+    prob_fg, prob_bg = np.array([i[0] for i in prob.tolist()]), np.array([
+        i[1] for i in prob.tolist()])
     # create graph
-    g = build_bayes_graph(img_down, labels, sigma=1e20, kappa=1)
+    g = build_bayes_graph(img_down, prob_fg, prob_bg, sigma=1e20, kappa=1)
     # cut the graph
     mask = cut_graph(g, size)
     mask = cv2.resize(mask, (img.shape[1], img.shape[0]))  # upsample

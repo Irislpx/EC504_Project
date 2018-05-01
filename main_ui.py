@@ -5,28 +5,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.misc import imresize
 from ek import Graph
-from bayes import BayesClassifier
+from sklearn.mixture import GaussianMixture
 
 
-def build_bayes_graph(img, labels, sigma=1e2, kappa=2):
+def build_bayes_graph(img, prob_fg, prob_bg, sigma=1e2, kappa=2):
     """ Build a graph from 4-neighborhood of pixels.
         Foreground and background is determined from
-        labels (1 for foreground, -1 for background, 0 otherwise)
+        labels (1 for foreground, 0 for background)
         and is modeled with naive Bayes classifiers."""
     m, n = img.shape[:2]
     # RGB vector version (one pixel per row)
     vim = img.reshape((-1, 3))
-    # RGB for foreground and background
-    foreground = img[labels == 1].reshape((-1, 3))
-    background = img[labels == -1].reshape((-1, 3))
-    train_data = [foreground, background]
-    # train naive Bayes classifier
-    bc = BayesClassifier()
-    bc.train(train_data)
-    # get probabilities for all pixels
-    bc_lables, prob = bc.classify(vim)
-    prob_fg, prob_bg = prob[0], prob[1]
-    print(np.amax(prob_fg), np.max(prob_bg))
     # create graph with m*n+2 nodes
     gr = Graph()
     gr.add_node(range(m * n + 2))
@@ -69,78 +58,49 @@ def cut_graph(gr, imsize):
     cuts = gr.find_cut()
     # convert graph to image with labels
     res = np.zeros(h * w)
-    for pos in list(cuts.keys())[:-2]:  # don't add source/sink
+    for pos in list(cuts.keys())[0:-2]:  # don't add source/sink
         res[pos - 1] = cuts[pos]
     return res.reshape((h, w))
 
 
-def create_msr_labels(anno):
-    """ Create label matrix for training from
-        user annotations. """
-    labels = np.zeros(anno.shape[:2])
-
-    anno_hsv = cv2.cvtColor(anno, cv2.COLOR_BGR2HSV)
-
-    # lower red mask (0-10)
-    lower_red = np.array([0, 43, 46])
-    upper_red = np.array([10, 255, 255])
-    mask0 = cv2.inRange(anno_hsv, lower_red, upper_red)
-
-    # upper red mask (170-180)
-    lower_red = np.array([156, 43, 46])
-    upper_red = np.array([180, 255, 255])
-    mask1 = cv2.inRange(anno_hsv, lower_red, upper_red)
-
-    # join red masks
-    red_mask = mask0 + mask1
-
-    # blue mask
-    lower_blue = np.array([100, 43, 46])
-    upper_blue = np.array([124, 255, 255])
-    blue_mask = cv2.inRange(anno_hsv, lower_blue, upper_blue)
-
-    # background
-    labels[np.where(red_mask > 0)] = -1
-    # foreground
-    labels[np.where(blue_mask > 0)] = 1
-
-    return labels
-
-
-def graph_cuts(img, anno, scale):
+def graph_cuts(img, scale, x, y):
     img_down = imresize(img, scale, interp='bilinear')  # downsample
-    anno_down = imresize(anno, scale, interp='nearest')  # downsample
     size = img_down.shape[:2]
-    # create label
-    labels = create_msr_labels(anno_down)
-    print(labels)
+    img_flat = np.concatenate((img_down[:, :, 0].flatten().reshape(-1, 1),
+                               img_down[:, :, 1].flatten().reshape(-1, 1),
+                               img_down[:, :, 2].flatten().reshape(-1, 1)), axis=1)
+    gmm = GaussianMixture(
+        n_components=2,
+        covariance_type='full',
+        max_iter=500,
+        n_init=5).fit(img_flat)
+    prob = gmm.predict_proba(img_flat)
+    labels = np.argmax(gmm.predict_proba(img_flat), axis=1)
+    prob_fg, prob_bg = np.array([i[0] for i in prob.tolist()]), np.array([
+        i[1] for i in prob.tolist()])
     # create graph
-    g = build_bayes_graph(img_down, labels, sigma=1e20, kappa=1)
+    g = build_bayes_graph(img_down, prob_fg, prob_bg, sigma=1e20, kappa=1)
     # cut the graph
     mask = cut_graph(g, size)
     mask = cv2.resize(mask, (img.shape[1], img.shape[0]))  # upsample
     mask = np.array(mask, dtype=np.uint8)
-    back = cv2.bitwise_and(img, img, mask=mask)
-    fore = img - back
-    return mask, fore, back
+    cuts = cv2.bitwise_and(img, img, mask=mask)
+    sy = 300 / img.shape[0]
+    sx = 450 / img.shape[1]
+    print(size, int(y / sy), int(x / sx), sy, sx)
+    if np.all(cuts[int(y / sy), int(x / sx)] == 0):
+        cuts = img - cuts
+    plt.figure()
+    plt.imshow(cv2.cvtColor(cuts, cv2.COLOR_BGR2RGB))
+    return mask, cuts
 
 
-if __name__ == '__main__':
-    scale = 0.1
-    img_name, anno_name = sys.argv[1:]
-    img = cv2.imread(img_name)
-    anno = cv2.imread(anno_name)
+def main_gmm(path, scale, x, y):
+    img = cv2.imread(path)
     start_time = time.time()
-    mask, fore, back = graph_cuts(img, anno, scale)
+    mask, cuts = graph_cuts(img, scale, x, y)
     end_time = time.time()
     total = end_time - start_time
     print('Running time: {:2}s'.format(total))
-    plt.figure()
-    plt.imshow(img)
-    plt.figure()
-    plt.imshow(mask)
-    plt.figure()
-    plt.imshow(fore)
-    plt.figure()
-    plt.imshow(back)
     plt.show()
+    return mask, cuts
