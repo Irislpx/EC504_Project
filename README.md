@@ -22,10 +22,10 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 
 ## Before Using
 
-Don't forget install the required libraries by command (used for ```pip3```):
+Our project is using Python 3, and for installing the required libraries by command:
 
 ```
-$ sudo pip install -r requirement.txt
+$ sudo pip3 install -r requirement.txt
 ```
 
 If the install for PyQt5 failes, please try:
