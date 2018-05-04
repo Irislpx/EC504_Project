@@ -66,6 +66,10 @@ $ python main_kmean.py [image_name] [scale_factor]
 ```
 $ python ui.py
 ```
+If not works, try:
+```
+$ pythonw ui.py
+```
 
 ### Cython
 
