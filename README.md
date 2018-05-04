@@ -22,7 +22,7 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 
 ## Before Using
 
-Don't forget install the required libraries by command:
+Don't forget install the required libraries by command (used for ```pip3```):
 
 ```
 $ sudo pip install -r requirement.txt
