@@ -28,6 +28,14 @@ Don't forget install the required libraries by command (used for ```pip3```):
 $ sudo pip install -r requirement.txt
 ```
 
+If the install for PyQt5 failes, please try:
+
+```
+$ sudo -H pip3 install pyqt5
+```
+
+Or refer to the official document: http://pyqt.sourceforge.net/Docs/PyQt5/installation.html
+
 The required Python libraries are:
 
 | Name | Version | Description |
