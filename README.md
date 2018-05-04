@@ -22,7 +22,7 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 
 ## Before Using
 
-Our project is using Python 3, and for installing the required libraries by command:
+Our project is using Python 3, and for installing the required libraries, please use command:
 
 ```
 $ sudo -H pip3 install -r requirement.txt
