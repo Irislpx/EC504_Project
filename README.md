@@ -40,12 +40,12 @@ The required Python libraries are:
 
 | Name | Version | Description | ```pip``` |
 | --- | --- | --- | --- |
-| OpenCV | 3.4.0.12 | Computer vision library | opencv-python |
-| Matplotlib | 2.1.2 | 2D plotting library | matplotlib |
-| NumPy | 1.12.0 | Scientific computing library | numpy |
-| SciPy | 1.0.0 | Scientific computing library | scipy |
-| PyQt5 | 5.10.1 | User interface library | pyqt5 |
-| Cython | 0.28.2 | Cython library | cython |
+| OpenCV | 3.4.0.12 | Computer vision library | ```opencv-python``` |
+| Matplotlib | 2.1.2 | 2D plotting library | ```matplotlib``` |
+| NumPy | 1.12.0 | Scientific computing library | ```numpy``` |
+| SciPy | 1.0.0 | Scientific computing library | ```scipy``` |
+| PyQt5 | 5.10.1 | User interface library | ```pyqt5``` |
+| Cython | 0.28.2 | Cython library | ```cython``` |
 
 ## Usage
 
