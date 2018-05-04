@@ -8,11 +8,13 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 | --- | --- |
 | `bayes.py` | Naive Bayes classifier class |
 | `ek.py` | Edmonds-Karp algorithm class |
-| `main.py` | Main program in annotation mode |
+| `main_gmm.py` | Main program in GMM mode |
 | `main_kmean.py` | Main program in k-mean mode |
+| `main_ui.py` | Main program used for GUI extension |
+| `ui.py` | GUI program |
 | `requirement.txt` | Requirement packages list for `pip` |
-| `teagle.jpg` | Test image |
-| `teagle_anno.jpg` | Test image annotation |
+| `images` | Folder contains test images |
+| `cython` | Folder contains cython files |
 
 ## Before Using
 
@@ -30,23 +32,39 @@ The required Python libraries are:
 | Matplotlib | 2.1.2 | 2D plotting library |
 | NumPy | 1.12.0 | Scientific computing library |
 | SciPy | 1.0.0 | Scientific computing library |
+| PyQt5 | 5.10.1 | User interface library |
+| Cython | 0.28.2 | Cython library |
 
 ## Usage
 
-### main.py
+### main_gmm.py
 
 ```
-python main.py [image_name] [annotation_name]
+$ python main_gmm.py [image_name] [scale_factor]
 ```
 
 * ```image_name```: The name for the image to be segmented.
 
-* ```annotation_name```: The name for the annotation image with blue lines indicate background and red lines indicate foreground, the size should be the same as the image to be segmented.
+* ```scale_factor```: The factor that you want the image to be shrinked, typically larger factor will cost more time to run, even have memory errors. For test images we provide, best scale is 0.2 - 0.25.
 
 ### main_kmean.py
 
 ```
-python main_kmean.py [image_name]
+$ python main_kmean.py [image_name] [scale_factor]
 ```
 
 * ```image_name```: The name for the image to be segmented.
+
+* ```scale_factor```: The factor that you want the image to be shrinked, typically larger factor will cost more time to run, even have memory errors. For test images we provide, best scale is 0.2 - 0.25.
+
+### ui.py
+
+```
+$ python ui.py
+```
+
+### Cython
+
+```
+$ sh ./start.sh
+```
