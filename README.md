@@ -13,6 +13,7 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 | `main_ui.py` | Main program used for GUI extension |
 | `ui.py` | GUI program |
 | `requirement.txt` | Requirement packages list for `pip` |
+
 | Foldername | Description | 
 | --- | --- |
 | `cython` | Folder contains cython files |
