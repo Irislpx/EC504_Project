@@ -25,7 +25,7 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 Don't forget install the required libraries by command:
 
 ```
-pip install -r requirement.txt
+$ sudo pip install -r requirement.txt
 ```
 
 The required Python libraries are:
