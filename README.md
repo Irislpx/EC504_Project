@@ -70,5 +70,6 @@ $ python ui.py
 ### Cython
 
 ```
-$ sh ./start.sh
+$ python setup.py build_ext --inplace
+$ python run.py
 ```
