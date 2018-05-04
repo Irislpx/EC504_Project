@@ -16,7 +16,7 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 
 | Foldername | Description | 
 | --- | --- |
-| `cython` | Folder contains cython files |
+| `cython` | Folder contains Cython files |
 | `images` | Folder contains test images |
 | `reports` | Folder contains reports |
 
