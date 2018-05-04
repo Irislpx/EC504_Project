@@ -25,16 +25,10 @@ This is the repository for Boston University EC504 project _Image Segmentation v
 Our project is using Python 3, and for installing the required libraries by command:
 
 ```
-$ sudo pip3 install -r requirement.txt
+$ sudo -H pip3 install -r requirement.txt
 ```
 
-If the install for PyQt5 failes, please try:
-
-```
-$ sudo -H pip3 install pyqt5
-```
-
-Or refer to the official document: http://pyqt.sourceforge.net/Docs/PyQt5/installation.html
+If the install for PyQt5 failes, please refer to the official document: http://pyqt.sourceforge.net/Docs/PyQt5/installation.html
 
 The required Python libraries are:
 
